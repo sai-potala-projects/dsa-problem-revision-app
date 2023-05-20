@@ -8,7 +8,11 @@
     "dev": "nodemon ./Backend/server.ts",
     "format:write": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|html|css|scss|json)\"",
     "check-types": "tsc -p tsconfig.json",
-    "check-all": "npm-run-all check-types format:check lint"
+    "check-all": "npm-run-all check-types format:check lint",
+    "start": "node dist/Backend/server.js",
+    "build": "npm run compile && npm run copy-files",
+    "compile": "tsc",
+    "copy-files": "cp package.json dist/ && cp -R backend dist/"
   },
   "husky": {
     "hooks": {
