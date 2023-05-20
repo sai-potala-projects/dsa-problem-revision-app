@@ -9,10 +9,10 @@
     "format:write": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|html|css|scss|json)\"",
     "check-types": "tsc -p tsconfig.json",
     "check-all": "npm-run-all check-types format:check lint",
-    "start": "node dist/Backend/server.js",
-    "build": "npm run compile && npm run copy-files",
+    "start": "node dist/server.js",
+    "build": "npm run compile",
     "compile": "tsc",
-    "copy-files": "cp package.json dist/ && cp -R backend dist/"
+    "copy-files": "cp package.json dist/"
   },
   "husky": {
     "hooks": {
