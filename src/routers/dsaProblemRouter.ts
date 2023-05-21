@@ -42,7 +42,7 @@ dsaProblemRouter.post(
         'problems._id': record._id,
       });
       if (!isUserRecordFound) {
-        res.status(500).send({ error: `Cannot edit problem '${record.title}' as it doesn't exist for the user.` });
+        res.status(401).send({ error: `Cannot edit problem '${record.title}' as it doesn't exist for the user.` });
         return;
       }
     }
@@ -98,7 +98,7 @@ dsaProblemRouter.post(
     const finalProblemList: any = userProblemList.filter((problem: any) => !problem.isCompleted);
 
     if (!userProblemList?.length) {
-      res.status(202).send({ error: 'no problems found' });
+      res.status(401).send({ error: 'no problems found' });
     }
     // Filter the problems based on your criteria (e.g., unsolved, difficulty level)
     const unsolvedProblems = finalProblemList.filter((problem: any) => !problem.isSolved);

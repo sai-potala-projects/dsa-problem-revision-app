@@ -34,7 +34,7 @@ userRouter.post(
       }
       res.status(401).send({ error: 'invalid email or password' });
     } else {
-      res.status(553).send({ error: 'email id dosent exist' });
+      res.status(401).send({ error: 'email id dosent exist' });
     }
   })
 );
@@ -46,7 +46,7 @@ userRouter.post(
     const hashedPassword = await bycrpt.hash(password, 10);
     const isEmailIdExist = await User.findOne({ email });
     if (isEmailIdExist) {
-      res.status(409).send({ error: 'user id already exist' });
+      res.status(401).send({ error: 'email id already exist' });
     } else {
       const newUser = new User({ userName, email, password: hashedPassword });
       const createdUser = await newUser.save();
