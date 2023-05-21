@@ -83,7 +83,7 @@ dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.defaul
             case 6: return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
             case 7:
                 allProblems = _b.sent();
-                res.status(202).send({ problems: allProblems });
+                res.status(202).send({ data: allProblems });
                 return [2 /*return*/];
         }
     });
@@ -128,7 +128,7 @@ dsaProblemRouter.post('/edit', utils_1.isAuth, (0, express_async_handler_1.defau
                 return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
             case 6:
                 allProblems = _a.sent();
-                res.status(202).send({ problems: allProblems });
+                res.status(202).send({ data: allProblems });
                 return [2 /*return*/];
         }
     });
@@ -142,7 +142,7 @@ dsaProblemRouter.post('/get', utils_1.isAuth, (0, express_async_handler_1.defaul
                 return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
             case 1:
                 allProblems = _a.sent();
-                res.status(202).send({ problems: allProblems });
+                res.status(202).send({ data: allProblems });
                 return [2 /*return*/];
         }
     });
@@ -165,7 +165,7 @@ dsaProblemRouter.post('/delete', utils_1.isAuth, (0, express_async_handler_1.def
                 return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
             case 3:
                 allProblems = _a.sent();
-                res.status(202).send({ problems: allProblems });
+                res.status(202).send({ data: allProblems });
                 return [2 /*return*/];
         }
     });
@@ -197,7 +197,7 @@ dsaProblemRouter.post('/picker', utils_1.isAuth, (0, express_async_handler_1.def
                         filteredProblems = unsolvedProblems.filter(function (problem) { return problem.difficultyLevel === selectedDifficultyLevel_1; });
                     }
                     problemPicker = filteredProblems[0];
-                    res.status(200).send(problemPicker);
+                    res.status(200).send({ data: problemPicker });
                 }
                 else {
                     sortedProblems = finalProblemList.sort(function (a, b) {
@@ -207,7 +207,7 @@ dsaProblemRouter.post('/picker', utils_1.isAuth, (0, express_async_handler_1.def
                         return dateA.getTime() - dateB.getTime();
                     });
                     problemPicker = sortedProblems[0];
-                    res.status(200).send(problemPicker);
+                    res.status(200).send({ data: problemPicker });
                 }
                 return [2 /*return*/];
         }

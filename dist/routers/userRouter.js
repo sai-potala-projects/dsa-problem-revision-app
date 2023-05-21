@@ -53,7 +53,7 @@ userRouter.get('/seed', (0, express_async_handler_1.default)(function (req, res)
             case 0: return [4 /*yield*/, userModel_1.default.insertMany(data_1.data.users)];
             case 1:
                 createdUsers = _a.sent();
-                res.send({ createdUsers: createdUsers });
+                res.send({ data: createdUsers });
                 return [2 /*return*/];
         }
     });
@@ -68,11 +68,13 @@ userRouter.post('/signin', (0, express_async_handler_1.default)(function (req, r
                 if (user) {
                     if (bcryptjs_1.default.compareSync(req.body.password, user.password)) {
                         res.send({
-                            _id: user._id,
-                            userName: user.userName,
-                            email: user.email,
-                            isAdmin: user.isAdmin,
-                            token: (0, utils_1.generateToken)(user),
+                            data: {
+                                _id: user._id,
+                                userName: user.userName,
+                                email: user.email,
+                                isAdmin: user.isAdmin,
+                                token: (0, utils_1.generateToken)(user),
+                            },
                         });
                         return [2 /*return*/];
                     }
@@ -106,10 +108,12 @@ userRouter.post('/register', (0, express_async_handler_1.default)(function (req,
             case 4:
                 createdUser = _b.sent();
                 res.status(200).send({
-                    _id: createdUser._id,
-                    userName: createdUser.userName,
-                    email: createdUser.email,
-                    token: (0, utils_1.generateToken)(createdUser),
+                    data: {
+                        _id: createdUser._id,
+                        userName: createdUser.userName,
+                        email: createdUser.email,
+                        token: (0, utils_1.generateToken)(createdUser),
+                    },
                 });
                 _b.label = 5;
             case 5: return [2 /*return*/];
