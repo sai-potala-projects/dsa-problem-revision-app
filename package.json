@@ -5,13 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./Backend/server.ts",
+    "dev": "nodemon src/index.ts",
     "format:write": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|html|css|scss|json)\"",
     "check-types": "tsc -p tsconfig.json",
     "check-all": "npm-run-all check-types format:check lint",
-    "start": "node dist/server.js",
-    "build": "npm run compile",
-    "compile": "tsc",
+    "start": "node src/index.ts",
     "copy-files": "cp package.json dist/"
   },
   "husky": {
