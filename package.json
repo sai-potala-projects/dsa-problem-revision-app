@@ -5,14 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./Backend/server.ts",
+    "type": "module",
+    "dev": "nodemon --exec ts-node src/index.ts",
     "format:write": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|html|css|scss|json)\"",
     "check-types": "tsc -p tsconfig.json",
     "check-all": "npm-run-all check-types format:check lint",
-    "start": "node dist/server.js",
-    "build": "npm run compile",
-    "compile": "tsc",
-    "copy-files": "cp package.json dist/"
+    "start": "nodemon src/index.ts",
+    "build": "rimraf dist && tsc"
   },
   "husky": {
     "hooks": {
@@ -32,6 +31,7 @@
     "mongoose": "^7.1.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

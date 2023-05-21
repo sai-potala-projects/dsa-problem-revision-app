@@ -119,7 +119,7 @@ dsaProblemRouter.post(
       // Retrieve the first problem from the filtered list (problem picker)
       const problemPicker = filteredProblems[0];
 
-      res.status(200).send(problemPicker);
+      res.status(200).send({ problems: problemPicker });
     } else {
       // If all problems are solved, prioritize the oldest solved problem
       const sortedProblems = finalProblemList.sort((a: any, b: any) => {
@@ -131,7 +131,7 @@ dsaProblemRouter.post(
 
       // Retrieve the first problem from the sorted list (problem picker)
       const problemPicker = sortedProblems[0];
-      res.status(200).send(problemPicker);
+      res.status(200).send({ problems: problemPicker });
     }
   })
 );

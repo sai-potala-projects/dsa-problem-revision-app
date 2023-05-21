@@ -35,6 +35,10 @@ app.get('/', (req: any, res: any) => {
   res.send('healthy');
 });
 
+app.get('/ping', (req: any, res: any) => {
+  res.send('pong....');
+});
+
 app.use('/api/users', userRouter);
 app.use('/api/problems', dsaProblemRouter);
 
