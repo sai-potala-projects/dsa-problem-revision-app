@@ -160,25 +160,19 @@ userRouter.post(
       var user;
       return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, userModel_1.default.findOne({ email: req.body.email })];
-            case 1:
-                user = _a.sent();
-                if (user) {
-                    if (bcryptjs_1.default.compareSync(req.body.password, user.password)) {
-                        res.send({
-                            _id: user._id,
-                            userName: user.userName,
-                            email: user.email,
-                            isAdmin: user.isAdmin,
-                            token: (0, utils_1.generateToken)(user),
-                        });
-                        return [2 /*return*/];
-                    }
-                    res.status(401).send({ error: 'invalid email or password' });
-                }
-                else {
-                    res.status(401).send({ error: 'email id dosent exist' });
-                }
+          case 0:
+            return [4 /*yield*/, userModel_1.default.findOne({ email: req.body.email })];
+          case 1:
+            user = _a.sent();
+            if (user) {
+              if (bcryptjs_1.default.compareSync(req.body.password, user.password)) {
+                res.send({
+                  _id: user._id,
+                  userName: user.userName,
+                  email: user.email,
+                  isAdmin: user.isAdmin,
+                  token: (0, utils_1.generateToken)(user),
+                });
                 return [2 /*return*/];
               }
               res.status(401).send({ error: 'invalid email or password' });
@@ -198,30 +192,31 @@ userRouter.post(
       var _a, userName, email, password, hashedPassword, isEmailIdExist, newUser, createdUser;
       return __generator(this, function (_b) {
         switch (_b.label) {
-            case 0:
-                _a = req.body, userName = _a.userName, email = _a.email, password = _a.password;
-                return [4 /*yield*/, bcryptjs_1.default.hash(password, 10)];
-            case 1:
-                hashedPassword = _b.sent();
-                return [4 /*yield*/, userModel_1.default.findOne({ email: email })];
-            case 2:
-                isEmailIdExist = _b.sent();
-                if (!isEmailIdExist) return [3 /*break*/, 3];
-                res.status(401).send({ error: 'email id already exist' });
-                return [3 /*break*/, 5];
-            case 3:
-                newUser = new userModel_1.default({ userName: userName, email: email, password: hashedPassword });
-                return [4 /*yield*/, newUser.save()];
-            case 4:
-                createdUser = _b.sent();
-                res.status(200).send({
-                    _id: createdUser._id,
-                    userName: createdUser.userName,
-                    email: createdUser.email,
-                    token: (0, utils_1.generateToken)(createdUser),
-                });
-                _b.label = 5;
-            case 5: return [2 /*return*/];
+          case 0:
+            (_a = req.body), (userName = _a.userName), (email = _a.email), (password = _a.password);
+            return [4 /*yield*/, bcryptjs_1.default.hash(password, 10)];
+          case 1:
+            hashedPassword = _b.sent();
+            return [4 /*yield*/, userModel_1.default.findOne({ email: email })];
+          case 2:
+            isEmailIdExist = _b.sent();
+            if (!isEmailIdExist) return [3 /*break*/, 3];
+            res.status(401).send({ error: 'email id already exist' });
+            return [3 /*break*/, 5];
+          case 3:
+            newUser = new userModel_1.default({ userName: userName, email: email, password: hashedPassword });
+            return [4 /*yield*/, newUser.save()];
+          case 4:
+            createdUser = _b.sent();
+            res.status(200).send({
+              _id: createdUser._id,
+              userName: createdUser.userName,
+              email: createdUser.email,
+              token: (0, utils_1.generateToken)(createdUser),
+            });
+            _b.label = 5;
+          case 5:
+            return [2 /*return*/];
         }
       });
     });

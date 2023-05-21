@@ -3,7 +3,6 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dsaProblemRouter from './routers/dsaProblemRouter';
 import userRouter from './routers/userRouter';
-const cors = require('cors');
 
 dotenv.config();
 
@@ -22,7 +21,6 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
 const port = process.env.PORT || 5000;
 
