@@ -12,5 +12,6 @@
   "forceConsistentCasingInFileNames": true,
   "esModuleInterop": true,
   "resolveJsonModule": true,
-  "allowJs": true
+  "allowJs": true,
+  "module": "es2020"
 }
