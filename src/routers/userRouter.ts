@@ -13,7 +13,7 @@ userRouter.get(
   expressAsyncHandler(async (req: Request, res: Response) => {
     //await User.deleteMany({});
     const createdUsers = await User.insertMany(data.users);
-    res.send({ createdUsers });
+    res.send({ data: createdUsers });
   })
 );
 
@@ -24,11 +24,13 @@ userRouter.post(
     if (user) {
       if (bycrpt.compareSync(req.body.password, user.password)) {
         res.send({
-          _id: user._id,
-          userName: user.userName,
-          email: user.email,
-          isAdmin: user.isAdmin,
-          token: generateToken(user),
+          data: {
+            _id: user._id,
+            userName: user.userName,
+            email: user.email,
+            isAdmin: user.isAdmin,
+            token: generateToken(user),
+          },
         });
         return;
       }
@@ -51,10 +53,12 @@ userRouter.post(
       const newUser = new User({ userName, email, password: hashedPassword });
       const createdUser = await newUser.save();
       res.status(200).send({
-        _id: createdUser._id,
-        userName: createdUser.userName,
-        email: createdUser.email,
-        token: generateToken(createdUser),
+        data: {
+          _id: createdUser._id,
+          userName: createdUser.userName,
+          email: createdUser.email,
+          token: generateToken(createdUser),
+        },
       });
     }
   })
