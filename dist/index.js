@@ -9,6 +9,7 @@ var express_1 = __importDefault(require("express"));
 var mongoose_1 = __importDefault(require("mongoose"));
 var dsaProblemRouter_1 = __importDefault(require("./routers/dsaProblemRouter"));
 var userRouter_1 = __importDefault(require("./routers/userRouter"));
+var cors = require('cors');
 dotenv_1.default.config();
 var mongoDbUrI = (_a = process.env.MONGODB_URI) !== null && _a !== void 0 ? _a : '';
 mongoose_1.default
@@ -22,6 +23,7 @@ mongoose_1.default
 var app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use(cors());
 var port = process.env.PORT || 5000;
 app.listen(port, function (err) {
     if (err) {
