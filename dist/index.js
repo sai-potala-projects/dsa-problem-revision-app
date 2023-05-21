@@ -32,9 +32,6 @@ app.listen(port, function (err) {
 app.get('/', function (req, res) {
     res.send('healthy');
 });
-app.get('/ping', function (req, res) {
-    res.send('pong....');
-});
 app.use('/api/users', userRouter_1.default);
 app.use('/api/problems', dsaProblemRouter_1.default);
 app.use(function (err, req, res, next) {
