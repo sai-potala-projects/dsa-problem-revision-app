@@ -25,7 +25,7 @@ dsaProblemRouter.post(
     }
 
     const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ data: allProblems });
+    res.status(202).send({ problems: allProblems });
   })
 );
 
@@ -54,7 +54,7 @@ dsaProblemRouter.post(
 
     const result = await Promise.all(updatePromises);
     const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ data: allProblems });
+    res.status(202).send({ problems: allProblems });
   })
 );
 
@@ -64,7 +64,7 @@ dsaProblemRouter.post(
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { _id: userObjectId } = req.userInfo;
     const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ data: allProblems });
+    res.status(202).send({ problems: allProblems });
   })
 );
 
@@ -80,7 +80,7 @@ dsaProblemRouter.post(
     // Delete problems from UserProblemList collection
     await UserProblemList.updateMany({}, { $pull: { problems: { $in: problemIds } } });
     const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ data: allProblems });
+    res.status(202).send({ problems: allProblems });
   })
 );
 
@@ -119,7 +119,7 @@ dsaProblemRouter.post(
       // Retrieve the first problem from the filtered list (problem picker)
       const problemPicker = filteredProblems[0];
 
-      res.status(200).send({ data: problemPicker });
+      res.status(200).send({ problems: problemPicker });
     } else {
       // If all problems are solved, prioritize the oldest solved problem
       const sortedProblems = finalProblemList.sort((a: any, b: any) => {
@@ -131,7 +131,7 @@ dsaProblemRouter.post(
 
       // Retrieve the first problem from the sorted list (problem picker)
       const problemPicker = sortedProblems[0];
-      res.status(200).send({ data: problemPicker });
+      res.status(200).send({ problems: problemPicker });
     }
   })
 );
