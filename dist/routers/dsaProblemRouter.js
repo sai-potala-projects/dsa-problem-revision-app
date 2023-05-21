@@ -107,7 +107,7 @@ dsaProblemRouter.post('/edit', utils_1.isAuth, (0, express_async_handler_1.defau
             case 2:
                 isUserRecordFound = _a.sent();
                 if (!isUserRecordFound) {
-                    res.status(500).send({ error: "Cannot edit problem '".concat(record.title, "' as it doesn't exist for the user.") });
+                    res.status(401).send({ error: "Cannot edit problem '".concat(record.title, "' as it doesn't exist for the user.") });
                     return [2 /*return*/];
                 }
                 _a.label = 3;
@@ -182,7 +182,7 @@ dsaProblemRouter.post('/picker', utils_1.isAuth, (0, express_async_handler_1.def
                 userProblemList = _a.sent();
                 finalProblemList = userProblemList.filter(function (problem) { return !problem.isCompleted; });
                 if (!(userProblemList === null || userProblemList === void 0 ? void 0 : userProblemList.length)) {
-                    res.status(202).send({ error: 'no problems found' });
+                    res.status(401).send({ error: 'no problems found' });
                 }
                 unsolvedProblems = finalProblemList.filter(function (problem) { return !problem.isSolved; });
                 if (unsolvedProblems.length > 0) {

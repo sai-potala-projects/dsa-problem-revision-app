@@ -79,7 +79,7 @@ userRouter.post('/signin', (0, express_async_handler_1.default)(function (req, r
                     res.status(401).send({ error: 'invalid email or password' });
                 }
                 else {
-                    res.status(553).send({ error: 'email id dosent exist' });
+                    res.status(401).send({ error: 'email id dosent exist' });
                 }
                 return [2 /*return*/];
         }
@@ -98,7 +98,7 @@ userRouter.post('/register', (0, express_async_handler_1.default)(function (req,
             case 2:
                 isEmailIdExist = _b.sent();
                 if (!isEmailIdExist) return [3 /*break*/, 3];
-                res.status(409).send({ error: 'user id already exist' });
+                res.status(401).send({ error: 'email id already exist' });
                 return [3 /*break*/, 5];
             case 3:
                 newUser = new userModel_1.default({ userName: userName, email: email, password: hashedPassword });
