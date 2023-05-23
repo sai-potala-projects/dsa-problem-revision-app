@@ -3,7 +3,7 @@ import { generateUniqueDataToken } from '../utils';
 
 const problemSchema = new mongoose.Schema(
   {
-    problemTitle: { type: String, required: true, minLength: 5, maxlength: 300, unique: true },
+    problemTitle: { type: String, required: true, minLength: 5, maxlength: 300 },
     problemStatement: { type: String, default: '' },
     difficultyLevel: { type: String, enum: ['Easy', 'Medium', 'Hard'], default: 'Medium' },
     url: { type: String, default: '' },
