@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserProblemList = exports.Problem = void 0;
 var mongoose_1 = __importDefault(require("mongoose"));
 var problemSchema = new mongoose_1.default.Schema({
-    problemTitle: { type: String, required: true, minLength: 5, maxlength: 300, unique: true },
+    problemTitle: { type: String, required: true, minLength: 5, maxlength: 300 },
     problemStatement: { type: String, default: '' },
     difficultyLevel: { type: String, enum: ['Easy', 'Medium', 'Hard'], default: 'Medium' },
     url: { type: String, default: '' },

@@ -50,7 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getLatestProblemsList = exports.generateUniqueDataToken = exports.isAuth = exports.generateToken = void 0;
+exports.editProblemsUtil = exports.getLatestProblemsList = exports.generateUniqueDataToken = exports.isAuth = exports.generateToken = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var uuid_1 = require("uuid");
 var ProblemListModel_1 = require("./models/ProblemListModel");
@@ -85,16 +85,59 @@ var generateUniqueDataToken = function () {
 };
 exports.generateUniqueDataToken = generateUniqueDataToken;
 var getLatestProblemsList = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
-    var problems;
+    var response, problems;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, ProblemListModel_1.UserProblemList.findOne({ user: userId })
                     .populate('problems')
                     .select({ problems: 1, _id: 0 })];
             case 1:
-                problems = (_a.sent()).problems;
+                response = _a.sent();
+                problems = (response === null || response === void 0 ? void 0 : response.problems) || [];
                 return [2 /*return*/, problems];
         }
     });
 }); };
 exports.getLatestProblemsList = getLatestProblemsList;
+var editProblemsUtil = function (_a) {
+    var userId = _a.userId, updateRecords = _a.updateRecords;
+    return __awaiter(void 0, void 0, void 0, function () {
+        var _i, updateRecords_1, record, isUserRecordFound, updatePromises;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _i = 0, updateRecords_1 = updateRecords;
+                    _b.label = 1;
+                case 1:
+                    if (!(_i < updateRecords_1.length)) return [3 /*break*/, 4];
+                    record = updateRecords_1[_i];
+                    return [4 /*yield*/, ProblemListModel_1.UserProblemList.findOne({
+                            user: userId,
+                            problems: record._id,
+                        })];
+                case 2:
+                    isUserRecordFound = _b.sent();
+                    if (!isUserRecordFound) {
+                        return [2 /*return*/, { error: "Cannot edit problem '".concat(record.title, "' as it doesn't exist for the user.") }];
+                    }
+                    _b.label = 3;
+                case 3:
+                    _i++;
+                    return [3 /*break*/, 1];
+                case 4:
+                    updatePromises = updateRecords.map(function (record) { return __awaiter(void 0, void 0, void 0, function () {
+                        var filter;
+                        return __generator(this, function (_a) {
+                            filter = { _id: record._id };
+                            return [2 /*return*/, ProblemListModel_1.Problem.updateOne(filter, { $set: record })];
+                        });
+                    }); });
+                    return [4 /*yield*/, Promise.all(updatePromises)];
+                case 5:
+                    _b.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+};
+exports.editProblemsUtil = editProblemsUtil;
