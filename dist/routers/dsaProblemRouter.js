@@ -1,4 +1,5 @@
 "use strict";
+<<<<<<< HEAD
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -10,6 +11,8 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+=======
+>>>>>>> 4d052ba31511e5c48ed14d453624be156a78dd0c
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -65,13 +68,18 @@ var utils_1 = require("../utils");
 var ProblemListModel_1 = require("../models/ProblemListModel");
 var dsaProblemRouter = express_1.default.Router();
 dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+<<<<<<< HEAD
     var userObjectId, problems, modifiedProblems, savedProblemsData, toBeEditedProblemsData, savedProblems, newProblemIds, userProblems, firstTimeUserProblemList, response, allProblems;
+=======
+    var userObjectId, problems, savedProblems, newProblemIds, userProblems, firstTimeUserProblemList, allProblems;
+>>>>>>> 4d052ba31511e5c48ed14d453624be156a78dd0c
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 userObjectId = req.userInfo._id;
                 problems = req.body.problems;
+<<<<<<< HEAD
                 modifiedProblems = problems.map(function (problem) {
                     if (!problem.difficultyLevel) {
                         return __assign(__assign({}, problem), { difficultyLevel: 'Medium' });
@@ -80,6 +88,9 @@ dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.defaul
                 savedProblemsData = problems.filter(function (problem) { return !problem._id; });
                 toBeEditedProblemsData = problems.filter(function (problem) { return problem._id; });
                 return [4 /*yield*/, ProblemListModel_1.Problem.insertMany(savedProblemsData)];
+=======
+                return [4 /*yield*/, ProblemListModel_1.Problem.insertMany(problems)];
+>>>>>>> 4d052ba31511e5c48ed14d453624be156a78dd0c
             case 1:
                 savedProblems = _b.sent();
                 newProblemIds = savedProblems.map(function (savedProblem) { return savedProblem._id; });
@@ -98,6 +109,7 @@ dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.defaul
             case 5:
                 _b.sent();
                 _b.label = 6;
+<<<<<<< HEAD
             case 6: return [4 /*yield*/, (0, utils_1.editProblemsUtil)({ userId: userObjectId, updateRecords: toBeEditedProblemsData })];
             case 7:
                 response = (_b.sent()) || '';
@@ -107,6 +119,10 @@ dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.defaul
                 }
                 return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
             case 8:
+=======
+            case 6: return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
+            case 7:
+>>>>>>> 4d052ba31511e5c48ed14d453624be156a78dd0c
                 allProblems = _b.sent();
                 res.status(202).send({ problems: allProblems });
                 return [2 /*return*/];
