@@ -1,6 +1,6 @@
 import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
-import { AuthenticatedRequest, getLatestProblemsList, isAuth } from '../utils';
+import { AuthenticatedRequest, editProblemsUtil, getLatestProblemsList, isAuth } from '../utils';
 import { Request, Response, NextFunction } from 'express';
 import { UserProblemList, Problem } from '../models/ProblemListModel';
 
@@ -12,7 +12,14 @@ dsaProblemRouter.post(
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { _id: userObjectId } = req.userInfo;
     const { problems } = req.body;
-    const savedProblems = await Problem.insertMany(problems);
+    const modifiedProblems = problems.map((problem: any) => {
+      if (!problem.difficultyLevel) {
+        return { ...problem, difficultyLevel: 'Medium' };
+      }
+    });
+    const savedProblemsData = problems.filter((problem: any) => !problem._id);
+    const toBeEditedProblemsData = problems.filter((problem: any) => problem._id);
+    const savedProblems = await Problem.insertMany(savedProblemsData);
     const newProblemIds: any = savedProblems.map((savedProblem: any) => savedProblem._id);
     const userProblems: any = await UserProblemList.findOne({ user: userObjectId });
 
@@ -24,6 +31,13 @@ dsaProblemRouter.post(
       await firstTimeUserProblemList.save();
     }
 
+    const response: any =
+      (await editProblemsUtil({ userId: userObjectId, updateRecords: toBeEditedProblemsData })) || '';
+
+    if (response.error) {
+      res.status(401).send({ error: response.error });
+      return;
+    }
     const allProblems = await getLatestProblemsList(userObjectId);
     res.status(202).send({ problems: allProblems });
   })

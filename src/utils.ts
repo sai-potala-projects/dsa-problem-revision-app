@@ -2,7 +2,7 @@ import jwt, { VerifyErrors, JwtPayload, VerifyCallback } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { User } from './models/globalModel';
 import { v4 as uuidv4 } from 'uuid';
-import { UserProblemList } from './models/ProblemListModel';
+import { Problem, UserProblemList } from './models/ProblemListModel';
 
 export interface AuthenticatedRequest extends Request {
   userInfo?: any;
@@ -37,9 +37,29 @@ export const generateUniqueDataToken = () => {
 };
 
 export const getLatestProblemsList = async (userId: any) => {
-  const { problems }: any = await UserProblemList.findOne({ user: userId })
+  const response: any = await UserProblemList.findOne({ user: userId })
     .populate('problems')
     .select({ problems: 1, _id: 0 });
-
+  const problems = response?.problems || [];
   return problems;
+};
+
+export const editProblemsUtil = async ({ userId, updateRecords }: any) => {
+  for (const record of updateRecords) {
+    const isUserRecordFound = await UserProblemList.findOne({
+      user: userId,
+      problems: record._id,
+    });
+
+    if (!isUserRecordFound) {
+      return { error: `Cannot edit problem '${record.title}' as it doesn't exist for the user.` };
+    }
+  }
+
+  const updatePromises = updateRecords.map(async (record: any) => {
+    const filter = { _id: record._id };
+    return Problem.updateOne(filter, { $set: record });
+  });
+
+  await Promise.all(updatePromises);
 };
