@@ -76,6 +76,7 @@ dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.defaul
                     if (!problem.difficultyLevel) {
                         return __assign(__assign({}, problem), { difficultyLevel: 'Medium' });
                     }
+                    return problem;
                 });
                 savedProblemsData = problems.filter(function (problem) { return !problem._id; });
                 toBeEditedProblemsData = modifiedProblems.filter(function (problem) { return problem._id; });
