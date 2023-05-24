@@ -11,6 +11,7 @@ const problemSchema = new mongoose.Schema(
     timesSolved: { type: Number, default: 0 },
     isCompleted: { type: Boolean, default: false },
     notes: { type: String, default: '' },
+    isImportant: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
