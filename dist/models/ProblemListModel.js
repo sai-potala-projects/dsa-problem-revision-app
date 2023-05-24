@@ -14,6 +14,7 @@ var problemSchema = new mongoose_1.default.Schema({
     timesSolved: { type: Number, default: 0 },
     isCompleted: { type: Boolean, default: false },
     notes: { type: String, default: '' },
+    isImportant: { type: Boolean, default: false },
 }, { timestamps: true });
 var userProblemListSchema = new mongoose_1.default.Schema({
     user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
