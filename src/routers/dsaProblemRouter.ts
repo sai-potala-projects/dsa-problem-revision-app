@@ -18,7 +18,7 @@ dsaProblemRouter.post(
       }
     });
     const savedProblemsData = problems.filter((problem: any) => !problem._id);
-    const toBeEditedProblemsData = problems.filter((problem: any) => problem._id);
+    const toBeEditedProblemsData = modifiedProblems.filter((problem: any) => problem._id);
     const savedProblems = await Problem.insertMany(savedProblemsData);
     const newProblemIds: any = savedProblems.map((savedProblem: any) => savedProblem._id);
     const userProblems: any = await UserProblemList.findOne({ user: userObjectId });
