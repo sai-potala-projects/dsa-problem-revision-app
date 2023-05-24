@@ -16,6 +16,7 @@ dsaProblemRouter.post(
       if (!problem.difficultyLevel) {
         return { ...problem, difficultyLevel: 'Medium' };
       }
+      return problem;
     });
     const savedProblemsData = problems.filter((problem: any) => !problem._id);
     const toBeEditedProblemsData = modifiedProblems.filter((problem: any) => problem._id);
