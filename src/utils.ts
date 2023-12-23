@@ -6,6 +6,7 @@ import { Problem, UserProblemList } from './models/ProblemListModel';
 
 export interface AuthenticatedRequest extends Request {
   userInfo?: any;
+  collectionName?: string;
 }
 
 export const generateToken = (user: User) => {
@@ -36,12 +37,24 @@ export const generateUniqueDataToken = () => {
   return uuidv4();
 };
 
-export const getLatestProblemsList = async (userId: any) => {
+export const getLatestProblemsList = async (userId: any, collectionName: string) => {
   const response: any = await UserProblemList.findOne({ user: userId })
-    .populate('problems')
-    .select({ problems: 1, _id: 0 });
+    .populate({
+      path: 'problems',
+      match: { collectionName: collectionName }, // Specify the condition to match the collectionName in the 'problems' array
+    })
+    .select({ problems: 1, _id: 0, collections: 1 });
+
   const problems = response?.problems || [];
-  return problems;
+  const collections = response?.collections;
+  return { problems, collections };
+};
+
+export const getUserCollections = async (userId: any) => {
+  const collectionResponse: any = await UserProblemList.findOne({ user: userId });
+
+  const collections = collectionResponse?.collections || [];
+  return { collections };
 };
 
 export const editProblemsUtil = async ({ userId, updateRecords }: any) => {

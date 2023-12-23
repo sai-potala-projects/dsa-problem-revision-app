@@ -15,10 +15,12 @@ var problemSchema = new mongoose_1.default.Schema({
     isCompleted: { type: Boolean, default: false },
     notes: { type: String, default: '' },
     isImportant: { type: Boolean, default: false },
+    collectionName: { type: String, default: false },
 }, { timestamps: true });
 var userProblemListSchema = new mongoose_1.default.Schema({
     user: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
     problems: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Problem', required: true, unique: true }],
+    collections: [{ type: String, required: true, unique: true }]
 }, { timestamps: true });
 exports.Problem = mongoose_1.default.model('Problem', problemSchema);
 exports.UserProblemList = mongoose_1.default.model('UserProblemList', userProblemListSchema);

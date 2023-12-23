@@ -1,6 +1,6 @@
 import express from 'express';
 import expressAsyncHandler from 'express-async-handler';
-import { AuthenticatedRequest, editProblemsUtil, getLatestProblemsList, isAuth } from '../utils';
+import { AuthenticatedRequest, editProblemsUtil, getLatestProblemsList, getUserCollections, isAuth } from '../utils';
 import { Request, Response, NextFunction } from 'express';
 import { UserProblemList, Problem } from '../models/ProblemListModel';
 
@@ -11,6 +11,7 @@ dsaProblemRouter.post(
   isAuth,
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { _id: userObjectId } = req.userInfo;
+    const { collectionName } = req.body || '';
     const { problems } = req.body;
     const modifiedProblems = problems.map((problem: any) => {
       if (!problem.difficultyLevel) {
@@ -23,12 +24,16 @@ dsaProblemRouter.post(
     const savedProblems = await Problem.insertMany(savedProblemsData);
     const newProblemIds: any = savedProblems.map((savedProblem: any) => savedProblem._id);
     const userProblems: any = await UserProblemList.findOne({ user: userObjectId });
+    const isCollectionNamePresent: boolean = userProblems?.collections?.includes(collectionName);
 
     if (userProblems) {
       userProblems?.problems.push(...newProblemIds);
+      !isCollectionNamePresent && userProblems?.collections?.push(collectionName);
       await userProblems.save();
     } else {
-      const firstTimeUserProblemList = new UserProblemList({ user: userObjectId, problems: [...newProblemIds] });
+      const firstTimeUserProblemList = !isCollectionNamePresent
+        ? new UserProblemList({ user: userObjectId, problems: [...newProblemIds], collections: [collectionName] })
+        : new UserProblemList({ user: userObjectId, problems: [...newProblemIds] });
       await firstTimeUserProblemList.save();
     }
 
@@ -39,8 +44,8 @@ dsaProblemRouter.post(
       res.status(401).send({ error: response.error });
       return;
     }
-    const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ problems: allProblems });
+    const { problems: allProblems, collections } = await getLatestProblemsList(userObjectId, collectionName);
+    res.status(202).send({ problems: allProblems, collections });
   })
 );
 
@@ -49,7 +54,7 @@ dsaProblemRouter.post(
   isAuth,
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { _id: userObjectId } = req.userInfo;
-    const { problems: updateRecords } = req.body;
+    const { problems: updateRecords, collectionName } = req.body;
 
     for (const record of updateRecords) {
       const isUserRecordFound = await UserProblemList.findOne({
@@ -68,8 +73,8 @@ dsaProblemRouter.post(
     });
 
     const result = await Promise.all(updatePromises);
-    const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ problems: allProblems });
+    const { problems: allProblems, collections } = await getLatestProblemsList(userObjectId, collectionName);
+    res.status(202).send({ problems: allProblems, collections });
   })
 );
 
@@ -78,8 +83,19 @@ dsaProblemRouter.post(
   isAuth,
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { _id: userObjectId } = req.userInfo;
-    const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ problems: allProblems });
+    const { collectionName } = req.body;
+    const { problems: allProblems, collections } = await getLatestProblemsList(userObjectId, collectionName);
+    res.status(202).send({ problems: allProblems, collections });
+  })
+);
+
+dsaProblemRouter.post(
+  '/collections/get',
+  isAuth,
+  expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const { _id: userObjectId } = req.userInfo;
+    const { collections } = await getUserCollections(userObjectId);
+    res.status(202).send({ collections });
   })
 );
 
@@ -87,15 +103,15 @@ dsaProblemRouter.post(
   '/delete',
   isAuth,
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const { problemIds } = req.body;
+    const { problemIds, collectionName } = req.body;
     const { _id: userObjectId } = req.userInfo;
 
     await Problem.deleteMany({ _id: { $in: problemIds } });
 
     // Delete problems from UserProblemList collection
     await UserProblemList.updateMany({}, { $pull: { problems: { $in: problemIds } } });
-    const allProblems = await getLatestProblemsList(userObjectId);
-    res.status(202).send({ problems: allProblems });
+    const { problems: allProblems, collections } = await getLatestProblemsList(userObjectId, collectionName);
+    res.status(202).send({ problems: allProblems, collections });
   })
 );
 
@@ -104,10 +120,10 @@ dsaProblemRouter.post(
   isAuth,
   expressAsyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const { _id: userObjectId } = req.userInfo;
-    const { difficultyLevel } = req.body;
+    const { difficultyLevel, collectionName } = req.body;
 
     // Fetch the user's problem list
-    const userProblemList: any = await getLatestProblemsList(userObjectId);
+    const { problems: userProblemList } = await getLatestProblemsList(userObjectId, collectionName);
 
     //filter is completed ones
     const finalProblemList: any = userProblemList.filter((problem: any) => !problem.isCompleted);
