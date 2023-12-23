@@ -12,6 +12,7 @@ const problemSchema = new mongoose.Schema(
     isCompleted: { type: Boolean, default: false },
     notes: { type: String, default: '' },
     isImportant: { type: Boolean, default: false },
+    collectionName: { type: String, default: false },
   },
   { timestamps: true }
 );
@@ -20,6 +21,7 @@ const userProblemListSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
     problems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Problem', required: true, unique: true }],
+    collections: [{ type: String, required: true, unique: true }]
   },
   { timestamps: true }
 );

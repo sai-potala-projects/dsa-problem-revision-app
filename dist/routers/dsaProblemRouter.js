@@ -65,12 +65,14 @@ var utils_1 = require("../utils");
 var ProblemListModel_1 = require("../models/ProblemListModel");
 var dsaProblemRouter = express_1.default.Router();
 dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userObjectId, problems, modifiedProblems, savedProblemsData, toBeEditedProblemsData, savedProblems, newProblemIds, userProblems, firstTimeUserProblemList, response, allProblems;
-    var _a;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+    var userObjectId, collectionName, problems, modifiedProblems, savedProblemsData, toBeEditedProblemsData, savedProblems, newProblemIds, userProblems, isCollectionNamePresent, firstTimeUserProblemList, response, _a, allProblems, collections;
+    var _b;
+    var _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0:
                 userObjectId = req.userInfo._id;
+                collectionName = (req.body || '').collectionName;
                 problems = req.body.problems;
                 modifiedProblems = problems.map(function (problem) {
                     if (!problem.difficultyLevel) {
@@ -82,47 +84,51 @@ dsaProblemRouter.post('/add', utils_1.isAuth, (0, express_async_handler_1.defaul
                 toBeEditedProblemsData = modifiedProblems.filter(function (problem) { return problem._id; });
                 return [4 /*yield*/, ProblemListModel_1.Problem.insertMany(savedProblemsData)];
             case 1:
-                savedProblems = _b.sent();
+                savedProblems = _e.sent();
                 newProblemIds = savedProblems.map(function (savedProblem) { return savedProblem._id; });
                 return [4 /*yield*/, ProblemListModel_1.UserProblemList.findOne({ user: userObjectId })];
             case 2:
-                userProblems = _b.sent();
+                userProblems = _e.sent();
+                isCollectionNamePresent = (_c = userProblems === null || userProblems === void 0 ? void 0 : userProblems.collections) === null || _c === void 0 ? void 0 : _c.includes(collectionName);
                 if (!userProblems) return [3 /*break*/, 4];
-                userProblems === null || userProblems === void 0 ? void 0 : (_a = userProblems.problems).push.apply(_a, newProblemIds);
+                userProblems === null || userProblems === void 0 ? void 0 : (_b = userProblems.problems).push.apply(_b, newProblemIds);
+                !isCollectionNamePresent && ((_d = userProblems === null || userProblems === void 0 ? void 0 : userProblems.collections) === null || _d === void 0 ? void 0 : _d.push(collectionName));
                 return [4 /*yield*/, userProblems.save()];
             case 3:
-                _b.sent();
+                _e.sent();
                 return [3 /*break*/, 6];
             case 4:
-                firstTimeUserProblemList = new ProblemListModel_1.UserProblemList({ user: userObjectId, problems: __spreadArray([], newProblemIds, true) });
+                firstTimeUserProblemList = !isCollectionNamePresent
+                    ? new ProblemListModel_1.UserProblemList({ user: userObjectId, problems: __spreadArray([], newProblemIds, true), collections: [collectionName] })
+                    : new ProblemListModel_1.UserProblemList({ user: userObjectId, problems: __spreadArray([], newProblemIds, true) });
                 return [4 /*yield*/, firstTimeUserProblemList.save()];
             case 5:
-                _b.sent();
-                _b.label = 6;
+                _e.sent();
+                _e.label = 6;
             case 6: return [4 /*yield*/, (0, utils_1.editProblemsUtil)({ userId: userObjectId, updateRecords: toBeEditedProblemsData })];
             case 7:
-                response = (_b.sent()) || '';
+                response = (_e.sent()) || '';
                 if (response.error) {
                     res.status(401).send({ error: response.error });
                     return [2 /*return*/];
                 }
-                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
+                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId, collectionName)];
             case 8:
-                allProblems = _b.sent();
-                res.status(202).send({ problems: allProblems });
+                _a = _e.sent(), allProblems = _a.problems, collections = _a.collections;
+                res.status(202).send({ problems: allProblems, collections: collections });
                 return [2 /*return*/];
         }
     });
 }); }));
 dsaProblemRouter.post('/edit', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userObjectId, updateRecords, _i, updateRecords_1, record, isUserRecordFound, updatePromises, result, allProblems;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var userObjectId, _a, updateRecords, collectionName, _i, updateRecords_1, record, isUserRecordFound, updatePromises, result, _b, allProblems, collections;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
                 userObjectId = req.userInfo._id;
-                updateRecords = req.body.problems;
+                _a = req.body, updateRecords = _a.problems, collectionName = _a.collectionName;
                 _i = 0, updateRecords_1 = updateRecords;
-                _a.label = 1;
+                _c.label = 1;
             case 1:
                 if (!(_i < updateRecords_1.length)) return [3 /*break*/, 4];
                 record = updateRecords_1[_i];
@@ -131,12 +137,12 @@ dsaProblemRouter.post('/edit', utils_1.isAuth, (0, express_async_handler_1.defau
                         'problems._id': record._id,
                     })];
             case 2:
-                isUserRecordFound = _a.sent();
+                isUserRecordFound = _c.sent();
                 if (!isUserRecordFound) {
                     res.status(401).send({ error: "Cannot edit problem '".concat(record.title, "' as it doesn't exist for the user.") });
                     return [2 /*return*/];
                 }
-                _a.label = 3;
+                _c.label = 3;
             case 3:
                 _i++;
                 return [3 /*break*/, 1];
@@ -150,62 +156,77 @@ dsaProblemRouter.post('/edit', utils_1.isAuth, (0, express_async_handler_1.defau
                 }); });
                 return [4 /*yield*/, Promise.all(updatePromises)];
             case 5:
-                result = _a.sent();
-                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
+                result = _c.sent();
+                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId, collectionName)];
             case 6:
-                allProblems = _a.sent();
-                res.status(202).send({ problems: allProblems });
+                _b = _c.sent(), allProblems = _b.problems, collections = _b.collections;
+                res.status(202).send({ problems: allProblems, collections: collections });
                 return [2 /*return*/];
         }
     });
 }); }));
 dsaProblemRouter.post('/get', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userObjectId, allProblems;
+    var userObjectId, collectionName, _a, allProblems, collections;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                userObjectId = req.userInfo._id;
+                collectionName = req.body.collectionName;
+                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId, collectionName)];
+            case 1:
+                _a = _b.sent(), allProblems = _a.problems, collections = _a.collections;
+                res.status(202).send({ problems: allProblems, collections: collections });
+                return [2 /*return*/];
+        }
+    });
+}); }));
+dsaProblemRouter.post('/collections/get', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var userObjectId, collections;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 userObjectId = req.userInfo._id;
-                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
+                return [4 /*yield*/, (0, utils_1.getUserCollections)(userObjectId)];
             case 1:
-                allProblems = _a.sent();
-                res.status(202).send({ problems: allProblems });
+                collections = (_a.sent()).collections;
+                res.status(202).send({ collections: collections });
                 return [2 /*return*/];
         }
     });
 }); }));
 dsaProblemRouter.post('/delete', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var problemIds, userObjectId, allProblems;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, problemIds, collectionName, userObjectId, _b, allProblems, collections;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                problemIds = req.body.problemIds;
+                _a = req.body, problemIds = _a.problemIds, collectionName = _a.collectionName;
                 userObjectId = req.userInfo._id;
                 return [4 /*yield*/, ProblemListModel_1.Problem.deleteMany({ _id: { $in: problemIds } })];
             case 1:
-                _a.sent();
+                _c.sent();
                 // Delete problems from UserProblemList collection
                 return [4 /*yield*/, ProblemListModel_1.UserProblemList.updateMany({}, { $pull: { problems: { $in: problemIds } } })];
             case 2:
                 // Delete problems from UserProblemList collection
-                _a.sent();
-                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
+                _c.sent();
+                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId, collectionName)];
             case 3:
-                allProblems = _a.sent();
-                res.status(202).send({ problems: allProblems });
+                _b = _c.sent(), allProblems = _b.problems, collections = _b.collections;
+                res.status(202).send({ problems: allProblems, collections: collections });
                 return [2 /*return*/];
         }
     });
 }); }));
 dsaProblemRouter.post('/picker', utils_1.isAuth, (0, express_async_handler_1.default)(function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userObjectId, difficultyLevel, userProblemList, finalProblemList, unsolvedProblems, filteredProblems, difficultyLevels, selectedDifficultyLevel_1, problemPicker, sortedProblems, problemPicker;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var userObjectId, _a, difficultyLevel, collectionName, userProblemList, finalProblemList, unsolvedProblems, filteredProblems, difficultyLevels, selectedDifficultyLevel_1, problemPicker, sortedProblems, problemPicker;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 userObjectId = req.userInfo._id;
-                difficultyLevel = req.body.difficultyLevel;
-                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId)];
+                _a = req.body, difficultyLevel = _a.difficultyLevel, collectionName = _a.collectionName;
+                return [4 /*yield*/, (0, utils_1.getLatestProblemsList)(userObjectId, collectionName)];
             case 1:
-                userProblemList = _a.sent();
+                userProblemList = (_b.sent()).problems;
                 finalProblemList = userProblemList.filter(function (problem) { return !problem.isCompleted; });
                 if (!(userProblemList === null || userProblemList === void 0 ? void 0 : userProblemList.length)) {
                     res.status(401).send({ error: 'no problems found' });

@@ -50,7 +50,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.editProblemsUtil = exports.getLatestProblemsList = exports.generateUniqueDataToken = exports.isAuth = exports.generateToken = void 0;
+exports.editProblemsUtil = exports.getUserCollections = exports.getLatestProblemsList = exports.generateUniqueDataToken = exports.isAuth = exports.generateToken = void 0;
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var uuid_1 = require("uuid");
 var ProblemListModel_1 = require("./models/ProblemListModel");
@@ -84,21 +84,38 @@ var generateUniqueDataToken = function () {
     return (0, uuid_1.v4)();
 };
 exports.generateUniqueDataToken = generateUniqueDataToken;
-var getLatestProblemsList = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, problems;
+var getLatestProblemsList = function (userId, collectionName) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, problems, collections;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, ProblemListModel_1.UserProblemList.findOne({ user: userId })
-                    .populate('problems')
-                    .select({ problems: 1, _id: 0 })];
+                    .populate({
+                    path: 'problems',
+                    match: { collectionName: collectionName }, // Specify the condition to match the collectionName in the 'problems' array
+                })
+                    .select({ problems: 1, _id: 0, collections: 1 })];
             case 1:
                 response = _a.sent();
                 problems = (response === null || response === void 0 ? void 0 : response.problems) || [];
-                return [2 /*return*/, problems];
+                collections = response === null || response === void 0 ? void 0 : response.collections;
+                return [2 /*return*/, { problems: problems, collections: collections }];
         }
     });
 }); };
 exports.getLatestProblemsList = getLatestProblemsList;
+var getUserCollections = function (userId) { return __awaiter(void 0, void 0, void 0, function () {
+    var collectionResponse, collections;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, ProblemListModel_1.UserProblemList.findOne({ user: userId })];
+            case 1:
+                collectionResponse = _a.sent();
+                collections = (collectionResponse === null || collectionResponse === void 0 ? void 0 : collectionResponse.collections) || [];
+                return [2 /*return*/, { collections: collections }];
+        }
+    });
+}); };
+exports.getUserCollections = getUserCollections;
 var editProblemsUtil = function (_a) {
     var userId = _a.userId, updateRecords = _a.updateRecords;
     return __awaiter(void 0, void 0, void 0, function () {
